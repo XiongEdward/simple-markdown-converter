@@ -17,12 +17,27 @@ export class ResultPage {
         // Configure marked with KaTeX support
         marked.use(markedKatex({
             throwOnError: false,
-            output: 'html'
+            output: 'html',
+            nonStandard: true  // Enable \(...\) and \[...\] syntax
         }));
     }
 
+    private preprocessMarkdown(markdown: string): string {
+        // Replace \[ ... \] with $$ ... $$
+        // Adding newlines around the block to ensure marked recognizes it as a block element
+        let processed = markdown.replace(/\\\[([\s\S]*?)\\\]/g, '\n$$$$$1$$$$\n');
+
+        // Replace \( ... \) with $ ... $
+        // We need to be careful not to match inside code blocks, but for a simple converter 
+        // a global replace is usually sufficient for this specific AI output format.
+        processed = processed.replace(/\\\(([\s\S]*?)\\\)/g, '$$$1$$');
+
+        return processed;
+    }
+
     async loadContent(): Promise<void> {
-        const markdown = sessionStorage.getItem('markdown') || '';
+        const rawMarkdown = sessionStorage.getItem('markdown') || '';
+        const markdown = this.preprocessMarkdown(rawMarkdown);
 
         // Configure marked options
         marked.setOptions({
