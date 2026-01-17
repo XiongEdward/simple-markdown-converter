@@ -1,4 +1,5 @@
 import { marked } from 'marked';
+import markedKatex from 'marked-katex-extension';
 
 export class ResultPage {
     private container: HTMLDivElement;
@@ -12,6 +13,12 @@ export class ResultPage {
         this.contentDiv.className = 'result-content';
 
         this.container.appendChild(this.contentDiv);
+
+        // Configure marked with KaTeX support
+        marked.use(markedKatex({
+            throwOnError: false,
+            output: 'html'
+        }));
     }
 
     async loadContent(): Promise<void> {

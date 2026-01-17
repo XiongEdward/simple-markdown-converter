@@ -1,4 +1,5 @@
 import './style.css';
+import 'katex/dist/katex.min.css';
 import { InputPage } from './pages/InputPage';
 import { ResultPage } from './pages/ResultPage';
 
